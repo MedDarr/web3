@@ -60,9 +60,9 @@ if ($errors) {
 
 // Сохранение в базу данных.
 
-$user = //'52810'; 
-$pass = //'1211928';
-$db = new// PDO('mysql:host=localhost;dbname=u52810', $user, $pass,
+$user = '52810'; 
+$pass = '1211928';
+$db = new PDO('mysql:host=localhost;dbname=u52810', $user, $pass,
   [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); 
 
 // Подготовленный запрос. Не именованные метки.
@@ -99,3 +99,35 @@ catch(PDOException $e){
 // Если запись не сохраняется, но ошибок не видно, то можно закомментировать эту строку чтобы увидеть ошибку.
 // Если ошибок при этом не видно, то необходимо настроить параметр display_errors для PHP.
 header('Location: ?save=1');
+
+/*
+CREATE TABLE application(
+    id int(10) unsigned NOT NULL AUTO_INCREMENT,
+    name varchar(128) NOT NULL DEFAULT '',
+    email varchar(128) NOT NULL DEFAULT '',
+    year int(4) NOT NULL DEFAULT 0,
+    pol varchar(1) NOT NULL DEFAULT '',
+    kolvo int(1) NOT NULL DEFAULT 0,
+    bio  varchar(128) NOT NULL DEFAULT '',
+    info int(1)  NOT NULL DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE ability (
+  a_id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  a_name varchar(128) NOT NULL,
+  PRIMARY KEY (a_id)
+);
+INSERT INTO ability (a_name) VALUES ('immortal');
+INSERT INTO ability (a_name) VALUES ('throughwalls');
+INSERT INTO ability (a_name) VALUES ('levitation');
+
+CREATE TABLE connection (
+  id int(10) unsigned NOT NULL,
+  a_id int(10) unsigned NOT NULL,
+  FOREIGN KEY (id)  REFERENCES application (id),
+  FOREIGN KEY (a_id) REFERENCES ability (a_id)
+);
+
+*/
