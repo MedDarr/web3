@@ -3,7 +3,7 @@
     <head>
       <title>My website</title>
       <link rel="stylesheet" href="style.css">
-    </head>
+      <>
     <body>
       <header>
   <div class="form">
