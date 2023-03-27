@@ -1,6 +1,5 @@
 <?php
 // Отправляем браузеру правильную кодировку,
-// файл index.php должен быть в кодировке UTF-8 без BOM.
 header('Content-Type: text/html; charset=UTF-8');
 
 // В суперглобальном массиве $_SERVER PHP сохраняет некторые заголовки запроса HTTP
@@ -11,8 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // Если есть параметр save, то выводим сообщение пользователю.
     print('Спасибо, результаты сохранены.');
   }
-  // Включаем содержимое файла form.php.
-  include('form.php');
+  include('index.php');
   // Завершаем работу скрипта.
   exit();
 }
@@ -33,11 +31,11 @@ if (empty($_POST['year'])) {
   print('Выберите год.<br/>');
   $errors = TRUE;
 }
-if (empty($_POST['pol']) || !($_POST['pol']=='м' || $_POST['pol']=='ж')) {
+if (empty($_POST['pol']) || !($_POST['pol']=='w' || $_POST['pol']=='m')) {
   print('Выберите пол.<br/>');
   $errors = TRUE;
 }
-if (empty($_POST['kolvo']) || !is_numeric($_POST['kol-vo']) || ($_POST['kol-vo']<2) || ($_POST['kol-vo']>4)) {
+if (empty($_POST['kolvo'])) {
   print('Выберите количество конечностей.<br/>');
   $errors = TRUE;
 }
@@ -47,7 +45,7 @@ if (empty($_POST['bio'])) {
     $errors = TRUE;
   }
   
-  if (empty($_POST['info']) || !($_POST['informed'] == 'on' || $_POST['informed'] == 1)) {
+  if (empty($_POST['info'])) {
     print('Поставьте галочку "С контрактом ознакомлен(а)".<br/>');
     $errors = TRUE;
   }
@@ -60,15 +58,14 @@ if ($errors) {
 
 // Сохранение в базу данных.
 
-$user = '52810'; 
+$user = 'u52810'; 
 $pass = '1211928';
-$db = new PDO('mysql:host=localhost;dbname=u52810', $user, $pass,
-  [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]); 
+$db = new PDO('mysql:host=localhost;dbname=u52810', $user, $pass, [PDO::ATTR_PERSISTENT => true]); 
 
 // Подготовленный запрос. Не именованные метки.
 try {
-    $stmt = $db->prepare("INSERT INTO application SET name = ?, email=?, year=?, pol=?, kolvo=?, bio=?,");
-    $stmt -> execute([$_POST['name'], $_POST['email'],$_POST['year'],$_POST['pol'], $_POST['kolvo'],$_POST['bio'] ]);
+    $stmt = $db->prepare("INSERT INTO application (name, email, year, pol, kolvo, bio) VALUES (:name, :email, :year, :pol, :kolvo, :bio);");
+    $stmtErr=$stmt -> execute(['name'=>$_POST['name'], 'email' => $_POST['email'], 'year'=>$_POST['year'],'pol'=> $_POST['pol'], 'kolvo'=> $_POST['kolvo'],'bio'=>$_POST['bio'] ]);
     $strId = $db -> lastInsertId();
     if (isset($_POST['sposobn'])) {
         foreach ($_POST['sposobn'] as $ability) {
@@ -99,35 +96,5 @@ catch(PDOException $e){
 // Если запись не сохраняется, но ошибок не видно, то можно закомментировать эту строку чтобы увидеть ошибку.
 // Если ошибок при этом не видно, то необходимо настроить параметр display_errors для PHP.
 header('Location: ?save=1');
+?>
 
-/*
-CREATE TABLE application(
-    id int(10) unsigned NOT NULL AUTO_INCREMENT,
-    name varchar(128) NOT NULL DEFAULT '',
-    email varchar(128) NOT NULL DEFAULT '',
-    year int(4) NOT NULL DEFAULT 0,
-    pol varchar(1) NOT NULL DEFAULT '',
-    kolvo int(1) NOT NULL DEFAULT 0,
-    bio  varchar(128) NOT NULL DEFAULT '',
-    info int(1)  NOT NULL DEFAULT 0,
-    PRIMARY KEY (id)
-);
-
-
-CREATE TABLE ability (
-  a_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  a_name varchar(128) NOT NULL,
-  PRIMARY KEY (a_id)
-);
-INSERT INTO ability (a_name) VALUES ('immortal');
-INSERT INTO ability (a_name) VALUES ('throughwalls');
-INSERT INTO ability (a_name) VALUES ('levitation');
-
-CREATE TABLE connection (
-  id int(10) unsigned NOT NULL,
-  a_id int(10) unsigned NOT NULL,
-  FOREIGN KEY (id)  REFERENCES application (id),
-  FOREIGN KEY (a_id) REFERENCES ability (a_id)
-);
-
-*/
