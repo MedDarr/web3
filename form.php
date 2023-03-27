@@ -39,6 +39,10 @@ if (empty($_POST['kolvo'])) {
   print('Выберите количество конечностей.<br/>');
   $errors = TRUE;
 }
+if (empty($_POST['sposobn'])) {
+  print('Заполните способности.<br/>');
+  $errors = TRUE;
+}
 
 if (empty($_POST['bio'])) {
     print('Заполните биографию.<br/>');
